@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+bootloader = "0.9.8"    # latest version doesnt work with bootimage. Use this for now
+volatile = "0.2.6"
 
 [profile.dev]
 panic = "abort"
@@ -12,3 +14,5 @@ panic = "abort"
 panic = "abort"
 
 [[bin]]
+name="kernel"
+path="src/main.rs"
