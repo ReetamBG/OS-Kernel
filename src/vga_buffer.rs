@@ -1,6 +1,9 @@
 use core::fmt;
+use lazy_static::lazy_static;
 use volatile::Volatile;
+use spin::Mutex;
 
+// Standard color palette in VGA text mode
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)] // each value is 8 bit (one char = 16 bits | 8 for char 8 for color)
@@ -118,23 +121,30 @@ impl fmt::Write for Writer {
     }
 }
 
-pub fn print_something() {
-    use core::fmt::Write;
-
-    let mut writer = Writer {
-        column_position: 0,
+// export the writer for global usage
+// exporting lazily (idk what was the problem with normal export i didnt understand)
+lazy_static! {
+    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
+    column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
-        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },   // ehh wtf is this ???
-    };
+        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+    });
+}
 
-    writer.write_byte(b'H');
-    writer.write_string("ello ");
-    writer.write_string("Wörld");
+// implementing the println macro
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
 
-    writeln!(
-        writer,
-        "\nMy name is {} and im {} years old",
-        "Reetam", 22.00
-    )
-    .unwrap();
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
+}
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    use core::fmt::Write;
+    WRITER.lock().write_fmt(args).unwrap();
 }
