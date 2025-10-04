@@ -1,7 +1,13 @@
 #![no_std] // dont use the std library
 #![no_main] // dont use the normal rust entry point
+// for testing purposes
+#![feature(custom_test_frameworks)]
+#![test_runner(crate::test_runner)]
+#![reexport_test_harness_main = "test_main"]
+
 
 use core::panic::PanicInfo;
+mod vga_buffer;
 
 // define our own panic handler
 #[panic_handler]
@@ -17,7 +23,24 @@ pub extern "C" fn _start() -> ! {
     println!("Hello world finally easy");
     println!("YOYO {}", 2.001);
 
+    #[cfg(test)]
+    test_main();
+
     loop {}
 }
 
-mod vga_buffer;
+
+#[cfg(test)]
+pub fn test_runner(tests: &[&dyn Fn()]) {
+    println!("Running {} tests", tests.len());
+    for test in tests {
+        test();
+    }
+}
+
+#[test_case]
+fn random_test() {
+    println!("This is a test");
+    assert_eq!(1, 1);
+    println!("Test finished");
+}

@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bootloader = "0.9.8"    # latest version doesnt work with bootimage. Use this for now
+bootloader = "0.9"    # latest version doesnt work with bootimage. Use this for now
 volatile = "0.2.6"
 spin = "0.10.0"
 
@@ -16,8 +16,10 @@ features = ["spin_no_std"]
 panic = "abort"
 
 [profile.release]
-panic = "abort"
+panic = "abort"  
 
 [[bin]]
 name="kernel"
+test=true
 path="src/main.rs"
+
