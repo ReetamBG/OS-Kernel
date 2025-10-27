@@ -7,13 +7,15 @@
 
 use core::panic::PanicInfo;
 
+pub mod gdt;
 pub mod interrupts;
 pub mod serial;
 pub mod vga_buffer;
 
-// initialize the interrupt descriptor table
+// initialize the interrupt descriptor table and global descriptor table
 pub fn init() {
     interrupts::init_idt();
+    gdt::init_gdt();
 }
 
 pub trait Testable {
@@ -39,6 +41,7 @@ pub fn test_runner(tests: &[&dyn Testable]) {
     exit_qemu(QemuExitCode::Success);
 }
 
+// TODO: Remove this as we already test seperately
 pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
@@ -62,6 +65,7 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
     }
 }
 
+// TODO: Remove this as we already test seperately
 /// Entry point for `cargo test`
 #[cfg(test)]
 #[unsafe(no_mangle)]
