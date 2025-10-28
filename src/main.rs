@@ -5,7 +5,7 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-use os_kernel::{init, println};
+use os_kernel::{hlt_loop, init, print, println};
 
 // linker looks for a function named _start as the entry point
 #[unsafe(no_mangle)]
@@ -18,7 +18,9 @@ pub extern "C" fn _start() -> ! {
     #[cfg(test)]
     test_main();
 
-    loop {}
+    print!("It did not crash!");
+
+    hlt_loop();
 }
 
 //TODO: Remove test related stuff from main.rs as all tests are being done independently
@@ -27,7 +29,7 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    hlt_loop();
 }
 
 // panic handler for tests mode
