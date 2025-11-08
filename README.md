@@ -4,3 +4,5 @@
 
 cargo run - for running the kernel
 cargo test - for tests
+
+![Project Banner](./temp.png)
