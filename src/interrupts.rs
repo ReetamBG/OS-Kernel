@@ -94,7 +94,9 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: InterruptStac
     {
         match key {
             DecodedKey::Unicode(character) => print!("{}", character),
-            DecodedKey::RawKey(key) => print!("{:?}", key),
+            // prints out stuff like Shift and Enter - not  needed for now
+            // DecodedKey::RawKey(key) => print!("{:?}", key),
+            DecodedKey::RawKey(_) => {}
         }
     }
 
