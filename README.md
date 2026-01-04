@@ -5,6 +5,6 @@
 cargo run - for running the kernel
 cargo test - for tests
 
-Memory management module up next!!
+Memory management module up next!
 
 ![Project Banner](./temp.png)
